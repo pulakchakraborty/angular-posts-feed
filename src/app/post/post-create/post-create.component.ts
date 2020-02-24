@@ -8,8 +8,8 @@ export class PostCreateComponent {
 
   newPost = 'No Content';
 
-  onAddPost() {
-    this.newPost = "The user\'s post";
-    alert("Post is added");
+  onAddPost(postInput: HTMLTextAreaElement) {
+    this.newPost = postInput.value;
+    //this.newPost = "The user\'s post";
   }
 }
