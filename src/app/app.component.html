@@ -1,5 +1,9 @@
 <app-header></app-header>
 <main>
+  <!-- comment out when using dependency injection
   <app-post-create (postCreated)="onPostAdded($event)"></app-post-create>
   <app-post-list [posts]="storedPosts"></app-post-list>
+  -->
+  <app-post-create></app-post-create>
+  <app-post-list></app-post-list>
 </main>
