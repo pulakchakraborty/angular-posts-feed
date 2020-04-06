@@ -30,6 +30,6 @@ export class PostCreateComponent {
     */
 
     this.postsService.addPost(form.value.title, form.value.content);    // use the service method addPost
-
+    form.resetForm();
   }
 }

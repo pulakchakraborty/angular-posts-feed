@@ -8,6 +8,7 @@
         ngModel
         required
         minlength="3"
+        placeholder="Title of the form"
         #title="ngModel">
         <mat-error *ngIf="title.invalid">Please enter a valid title</mat-error>
         <!-- [(ngModel)]="enteredTitle"> -->
@@ -19,6 +20,7 @@
         name="content"
         ngModel
         required
+        placeholder="Content of the form"
         #content="ngModel"></textarea>
         <mat-error *ngIf="content.invalid">Please enter a valid content</mat-error>
         <!-- </textarea>[(ngModel)]="enteredContent"></textarea> -->
