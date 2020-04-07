@@ -1,6 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+// add a new middleware to parse the json data present in the incoming request
+app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -11,6 +15,14 @@ app.use((req, res, next) => {
     "GET, POST, DELETE, PATCH, OPTIONS"
   );
   next();
+});
+
+app.post("/api/posts", (req, res, next) => {
+  const post = req.body;
+  console.log('Incoming post request received');
+  console.log(post);
+  res.status(201).json({
+    message: 'This is a quick ack to the sent request'});
 });
 
 app.use("/api/posts", (req, res, next) => {
