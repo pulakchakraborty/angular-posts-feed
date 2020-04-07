@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Mean-Angular-P1';
+
+  /* Remove this code portion while using the PostsService
+  storedPosts: Post[] = [];   // create an array of posts
+
+  onPostAdded(post) {
+    this.storedPosts.push(post);
+  }
+  */
 }
