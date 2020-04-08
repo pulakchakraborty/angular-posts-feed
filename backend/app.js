@@ -1,9 +1,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const Post = require('./models/post');
 
 const app = express();
+
+/* use mongoose to connect to the MongoDB Atlas cloud cluster
+   - change parameters of connect method as necessary ;-)
+*/
+
+mongoose.connect("mongodb+srv://<username>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
+  .then(() => {
+    console.log('Connected to Atlas cloud :-)');
+  })
+  .catch(() => {
+    console.log('Connection to Atlas cloud failed!!!');
+  });
 
 // add a new middleware to parse the json data present in the incoming request
 app.use(bodyParser.json());
@@ -26,34 +39,24 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
+  // Saving the data from incoming POST request into post collection
+  post.save();
   console.log('Incoming post request received');
   console.log(post);
   res.status(201).json({
     message: 'This is a quick ack to the sent request'});
 });
 
-app.use("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: "ABC1000001",
-      title: "First Post from server",
-      content: "The content of the first post"
-    },
-    {
-      id: "ABC1000002",
-      title: "Second Post from server",
-      content: "The content of the second post"
-    },
-    {
-      id: "ABC1000003",
-      title: "Third Post from server",
-      content: "The content of the third post"
-    }
-  ];
-  res.status(200).json({
-    message: 'the posts from the server are fetched successfully!!',
-    posts: posts
-  });   // return to the client
+app.get("/api/posts", (req, res, next) => {
+  // Fetch the data from the MongoDB database using static find() method
+  Post.find().then(documents => {
+    console.log(documents);
+    res.status(200).json({
+      message: 'the posts from the server are fetched successfully!!',
+      posts: documents
+    });   // return to the client
+  });
+
 });
 
 module.exports = app;

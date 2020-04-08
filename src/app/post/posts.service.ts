@@ -1,6 +1,7 @@
 import { Post } from './post.model';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})  // alternative to declaring it in the providers section
@@ -15,9 +16,18 @@ export class PostsService {
     // return [...this.posts];   // use spread operator tocopy elements of posts array
 
     // send a new http get request to fetch resources i.e. posts from the backend
-    this.http.get<{message: String, posts: Post[]}>('http://localhost:3000/api/posts')
-    .subscribe((postData) => {
-      this.posts = postData.posts;
+    this.http.get<{message: String, posts: any}>('http://localhost:3000/api/posts')
+    .pipe(map((postData) => {
+      return postData.posts.map(post => {
+        return {
+          id: post._id,
+          title: post.title,
+          content: post.content
+        };
+      });
+    }))
+    .subscribe((transformedPosts) => {
+      this.posts = transformedPosts;
       this.postsUpdated.next([...this.posts]);
     });
   }
