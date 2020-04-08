@@ -40,11 +40,14 @@ app.post("/api/posts", (req, res, next) => {
     content: req.body.content
   });
   // Saving the data from incoming POST request into post collection
-  post.save();
-  console.log('Incoming post request received');
-  console.log(post);
-  res.status(201).json({
-    message: 'This is a quick ack to the sent request'});
+  post.save().then(createdPost => {
+    console.log('Incoming post request received');
+    console.log(post);
+    res.status(201).json({
+      message: 'This is a quick ack to the sent request',
+      postId: createdPost._id
+    });
+  });
 });
 
 app.get("/api/posts", (req, res, next) => {
