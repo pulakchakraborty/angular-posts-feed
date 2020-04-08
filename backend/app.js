@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const Post = require('./models/post');
+
 const app = express();
 
 // add a new middleware to parse the json data present in the incoming request
@@ -18,7 +20,12 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
+  // const post = req.body;
+  // Creating a Post instance managed by mongoose
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
   console.log('Incoming post request received');
   console.log(post);
   res.status(201).json({
