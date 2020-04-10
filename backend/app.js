@@ -27,7 +27,7 @@ app.use((req, res, next) => {
     "Origin, X-Requested-with, Content-Type, Accept"
   );
   res.setHeader("Access-Control-Allow-Methods",
-    "GET, POST, DELETE, PATCH, OPTIONS"
+    "GET, POST, DELETE, PUT, PATCH, OPTIONS"
   );
   next();
 });
@@ -46,6 +46,23 @@ app.post("/api/posts", (req, res, next) => {
     res.status(201).json({
       message: 'This is a quick ack to the sent request',
       postId: createdPost._id
+    });
+  });
+});
+
+app.put("/api/posts/:id", (req, res, next) => {
+  // Creating a Post instance managed by mongoose
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content
+  });
+
+  // Updating the resource using the data from incoming PUT request
+  Post.updateOne({_id: req.params.id}, post).then(result => {
+    console.log(result);
+    res.status(200).json({
+      message: 'Post update successful :-)'
     });
   });
 });
