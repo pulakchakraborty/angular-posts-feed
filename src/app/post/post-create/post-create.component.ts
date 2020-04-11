@@ -14,6 +14,7 @@ export class PostCreateComponent implements OnInit {
   enteredTitle = "";
   enteredContent = "";
   post: Post;
+  isLoading = false   // Spinner Flag
   private mode = 'create';
   private postId: string;
   //@Output() postCreated = new EventEmitter<Post>();
@@ -26,8 +27,11 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
+        // Load the Spinner before navigating to the Edit post page
+        this.isLoading = true;
         this.postsService.getpost(this.postId)
           .subscribe(postData => {
+            this.isLoading = false;   // Turn off the spinner once getting the details of the to be edited post
             this.post = {id: postData._id, title: postData.title, content: postData.content};
           });
       } else {
@@ -41,6 +45,8 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    // Load the Spinner after saving a post
+    this.isLoading = true;
     if (this.mode == 'create') {
       // use the service method addPost when mode is create
       this.postsService.addPost(form.value.title, form.value.content);
