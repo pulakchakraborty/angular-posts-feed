@@ -1,8 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-const Post = require('./models/post');
+const postRoutes = require('./routes/posts');
 
 const app = express();
 
@@ -10,7 +9,7 @@ const app = express();
    - change parameters of connect method as necessary ;-)
 */
 
-mongoose.connect("mongodb+srv://<username>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
+mongoose.connect("mongodb+srv://<user>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
   .then(() => {
     console.log('Connected to Atlas cloud :-)');
   })
@@ -27,48 +26,11 @@ app.use((req, res, next) => {
     "Origin, X-Requested-with, Content-Type, Accept"
   );
   res.setHeader("Access-Control-Allow-Methods",
-    "GET, POST, DELETE, PATCH, OPTIONS"
+    "GET, POST, DELETE, PUT, PATCH, OPTIONS"
   );
   next();
 });
 
-app.post("/api/posts", (req, res, next) => {
-  // const post = req.body;
-  // Creating a Post instance managed by mongoose
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content
-  });
-  // Saving the data from incoming POST request into post collection
-  post.save().then(createdPost => {
-    console.log('Incoming post request received');
-    console.log(post);
-    res.status(201).json({
-      message: 'This is a quick ack to the sent request',
-      postId: createdPost._id
-    });
-  });
-});
-
-app.get("/api/posts", (req, res, next) => {
-  // Fetch the data from the MongoDB database using static find() method
-  Post.find().then(documents => {
-    console.log(documents);
-    res.status(200).json({
-      message: 'the posts from the server are fetched successfully!!',
-      posts: documents
-    });   // return to the client
-  });
-
-});
-
-app.delete("/api/posts/:id", (req, res, next) => {
-  Post.deleteOne({_id: req.params.id}).then(result => {
-    console.log(result);
-    res.status(200).json({
-      message: 'the selected post has been deleted!!!'
-    });
-  });
-});
+app.use('/api/posts', postRoutes);
 
 module.exports = app;
