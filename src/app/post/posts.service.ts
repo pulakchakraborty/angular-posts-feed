@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import  { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 @Injectable({providedIn: 'root'})  // alternative to declaring it in the providers section
@@ -11,7 +12,7 @@ export class PostsService {
   private postsUpdated = new Subject<Post[]>();
 
   /* inject HttpClient */
-  constructor (private http: HttpClient) {}
+  constructor (private http: HttpClient, private router: Router) {}
 
   getPosts() {
     // return [...this.posts];   // use spread operator tocopy elements of posts array
@@ -60,6 +61,7 @@ export class PostsService {
         post.id = id;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
@@ -78,6 +80,7 @@ export class PostsService {
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
         console.log("local post array:" + this.posts);
       });
   }
