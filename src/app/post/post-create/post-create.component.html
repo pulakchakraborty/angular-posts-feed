@@ -5,7 +5,7 @@
         matInput
         type="text"
         name="title"
-        [ngModel]="post.title"
+        [ngModel]="post?.title"
         required
         minlength="3"
         placeholder="Title of the form"
@@ -18,7 +18,7 @@
         matInput
         rows="6"
         name="content"
-        [ngModel]="post.content"
+        [ngModel]="post?.content"
         required
         placeholder="Content of the form"
         #content="ngModel"></textarea>

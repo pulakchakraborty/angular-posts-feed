@@ -39,7 +39,11 @@ export class PostsService {
 
   // Fetch the post with a particular id for editing purpose
   getpost(id: string) {
-    return {...this.posts.find(p => p.id === id)};
+    // return {...this.posts.find(p => p.id === id)};
+    return this.http
+              .get<{ _id: string, title: string, content: string }>(
+                'http://localhost:3000/api/posts/' + id
+              );
   }
 
   addPost(title: String, content: String) {
@@ -68,6 +72,13 @@ export class PostsService {
 
       .subscribe((responseData) => {
         console.log(responseData);
+        // Update the post array locally
+        const updatedPosts = [...this.posts];
+        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+        updatedPosts[oldPostIndex] = post;
+        this.posts = updatedPosts;
+        this.postsUpdated.next([...this.posts]);
+        console.log("local post array:" + this.posts);
       });
   }
 

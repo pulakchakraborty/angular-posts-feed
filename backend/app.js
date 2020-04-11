@@ -10,7 +10,7 @@ const app = express();
    - change parameters of connect method as necessary ;-)
 */
 
-mongoose.connect("mongodb+srv://<username>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
+mongoose.connect("mongodb+srv://<user>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
   .then(() => {
     console.log('Connected to Atlas cloud :-)');
   })
@@ -77,6 +77,17 @@ app.get("/api/posts", (req, res, next) => {
     });   // return to the client
   });
 
+});
+
+// Fetch post details for a particular post id
+app.get("/api/posts/:id", (req, res, next) => {
+  Post.findById(req.params.id).then(post => {
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: 'Post not found' });
+    }
+  });
 });
 
 app.delete("/api/posts/:id", (req, res, next) => {
