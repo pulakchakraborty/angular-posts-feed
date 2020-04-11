@@ -29,6 +29,15 @@
     <button
       mat-raised-button
       color="primary"
-      type="submit">Save Post</button>
+      type="submit">Save Post
+    </button>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="pickAFile.click()">
+      Add Image
+    </button>
+    <input type="file" #pickAFile>
   </form>
 </mat-card>
