@@ -9,7 +9,7 @@ const app = express();
    - change parameters of connect method as necessary ;-)
 */
 
-mongoose.connect("mongodb+srv://<user>:<password>@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
+mongoose.connect("mongodb+srv://user:password@cluster0-mfoq8.mongodb.net/Angular-MEAN-App")
   .then(() => {
     console.log('Connected to Atlas cloud :-)');
   })

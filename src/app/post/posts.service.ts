@@ -47,18 +47,30 @@ export class PostsService {
               );
   }
 
-  addPost(title: String, content: String) {
+  addPost(title: string, content: string, image: File) {
+    /* Comment out because of file upload
     const post: Post = {id: null, title: title, content: content};
+    */
+
+    // Configure a new Form Data to be passed on as a http get request argument
+    const postData = new FormData();
+    // note that name of first parameter is important because of backend
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
 
     // send a new http POST request to add a resource in the backend
     this.http
       .post<{message: string, postId: string}>(
-        'http://localhost:3000/api/posts', post
+        'http://localhost:3000/api/posts', postData
       )
 
       .subscribe((responseData) => {
+        const post: Post = {id: responseData.postId, title: title, content: content};
+        /* Comment out because of JSON -> FormData change
         const id = responseData.postId;
         post.id = id;
+        */
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
