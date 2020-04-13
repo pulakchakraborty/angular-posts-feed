@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 const postRoutes = require('./routes/posts');
 
 const app = express();
@@ -19,6 +20,9 @@ mongoose.connect("mongodb+srv://user:password@cluster0-mfoq8.mongodb.net/Angular
 
 // add a new middleware to parse the json data present in the incoming request
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+// add a new middleware to make /images statically accessible
+app.use("/images", express.static(path.join("backend/images")));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

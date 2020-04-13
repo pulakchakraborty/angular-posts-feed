@@ -27,11 +27,13 @@ const storage = multer.diskStorage({
 });
 
 router.post("", multer({storage: storage}).single("image"), (req, res, next) => {
+  const url = req.protocol + '://' + req.get('host');
   // const post = req.body;
   // Creating a Post instance managed by mongoose
   const post = new Post({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
+    imagePath: url + "/images/" + req.file.filename
   });
   // Saving the data from incoming POST request into post collection
   post.save().then(createdPost => {
@@ -39,7 +41,10 @@ router.post("", multer({storage: storage}).single("image"), (req, res, next) => 
     console.log(post);
     res.status(201).json({
       message: 'This is a quick ack to the sent request',
-      postId: createdPost._id
+      post: {
+        ...createdPost,
+        id: createdPost._id,
+      }
     });
   });
 });

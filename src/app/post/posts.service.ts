@@ -24,7 +24,8 @@ export class PostsService {
         return {
           id: post._id,
           title: post.title,
-          content: post.content
+          content: post.content,
+          imagePath: post.imagePath
         };
       });
     }))
@@ -61,12 +62,17 @@ export class PostsService {
 
     // send a new http POST request to add a resource in the backend
     this.http
-      .post<{message: string, postId: string}>(
+      .post<{message: string, post: Post }>(
         'http://localhost:3000/api/posts', postData
       )
 
       .subscribe((responseData) => {
-        const post: Post = {id: responseData.postId, title: title, content: content};
+        const post: Post = {
+          id: responseData.post.id,
+          title: title,
+          content: content,
+          imagePath: responseData.post.imagePath
+        };
         /* Comment out because of JSON -> FormData change
         const id = responseData.postId;
         post.id = id;
@@ -79,7 +85,7 @@ export class PostsService {
 
   // this method send a http PUT request for a particular resource in the backend
   updatePost(id: string, title: string, content: string) {
-    const post: Post = {id: id, title: title, content: content};
+    const post: Post = {id: id, title: title, content: content, imagePath: null};
 
     this.http
       .put('http://localhost:3000/api/posts/' + id, post)
