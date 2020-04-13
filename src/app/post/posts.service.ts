@@ -24,7 +24,8 @@ export class PostsService {
         return {
           id: post._id,
           title: post.title,
-          content: post.content
+          content: post.content,
+          imagePath: post.imagePath
         };
       });
     }))
@@ -42,23 +43,40 @@ export class PostsService {
   getpost(id: string) {
     // return {...this.posts.find(p => p.id === id)};
     return this.http
-              .get<{ _id: string, title: string, content: string }>(
+              .get<{ _id: string, title: string, content: string, imagePath: string }>(
                 'http://localhost:3000/api/posts/' + id
               );
   }
 
-  addPost(title: String, content: String) {
+  addPost(title: string, content: string, image: File) {
+    /* Comment out because of file upload
     const post: Post = {id: null, title: title, content: content};
+    */
+
+    // Configure a new Form Data to be passed on as a http get request argument
+    const postData = new FormData();
+    // note that name of first parameter is important because of backend
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
 
     // send a new http POST request to add a resource in the backend
     this.http
-      .post<{message: string, postId: string}>(
-        'http://localhost:3000/api/posts', post
+      .post<{message: string, post: Post }>(
+        'http://localhost:3000/api/posts', postData
       )
 
       .subscribe((responseData) => {
+        const post: Post = {
+          id: responseData.post.id,
+          title: title,
+          content: content,
+          imagePath: responseData.post.imagePath
+        };
+        /* Comment out because of JSON -> FormData change
         const id = responseData.postId;
         post.id = id;
+        */
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
@@ -66,17 +84,33 @@ export class PostsService {
   }
 
   // this method send a http PUT request for a particular resource in the backend
-  updatePost(id: string, title: string, content: string) {
-    const post: Post = {id: id, title: title, content: content};
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    //const post: Post = {id: id, title: title, content: content, imagePath: null};
+    let postData: Post | FormData;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('id', id);
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      postData = {id: id, title: title, content: content, imagePath: image};
+    }
 
     this.http
-      .put('http://localhost:3000/api/posts/' + id, post)
+      .put('http://localhost:3000/api/posts/' + id, postData)
 
       .subscribe((responseData) => {
         console.log(responseData);
         // Update the post array locally
         const updatedPosts = [...this.posts];
         const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+        const post: Post = {
+          id: id,
+          title: title,
+          content: content,
+          imagePath: ""
+        };
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
