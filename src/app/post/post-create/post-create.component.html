@@ -10,6 +10,17 @@
         <mat-error *ngIf="form.get('title').invalid">Please enter a valid title</mat-error>
         <!-- [(ngModel)]="enteredTitle"> -->
     </mat-form-field>
+    <button
+      mat-button
+      color="warn"
+      type="button"
+      (click)="pickAFile.click()">
+      Add Image
+    </button>
+    <input type="file" #pickAFile (change)="onImagePicked($event)">
+    <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview">
+      <img [src]="imagePreview" [alt]="form.value.title">
+    </div>
     <mat-form-field>
       <textarea
         matInput
@@ -24,13 +35,5 @@
       color="primary"
       type="submit">Save Post
     </button>
-    <button
-      mat-button
-      color="warn"
-      type="button"
-      (click)="pickAFile.click()">
-      Add Image
-    </button>
-    <input type="file" #pickAFile (change)="onImagePicked($event)">
   </form>
 </mat-card>
