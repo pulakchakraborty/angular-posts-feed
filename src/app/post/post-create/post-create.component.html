@@ -31,6 +31,6 @@
       (click)="pickAFile.click()">
       Add Image
     </button>
-    <input type="file" #pickAFile>
+    <input type="file" #pickAFile (change)="onImagePicked($event)">
   </form>
 </mat-card>
