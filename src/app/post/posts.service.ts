@@ -1,10 +1,14 @@
-import { Post } from './post.model';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import  { Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+
+import { Post } from './post.model';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = environment.apiURL + "/posts";
 
 @Injectable({providedIn: 'root'})  // alternative to declaring it in the providers section
 export class PostsService {
@@ -18,7 +22,7 @@ export class PostsService {
     // return [...this.posts];   // use spread operator tocopy elements of posts array
 
     // send a new http get request to fetch resources i.e. posts from the backend
-    this.http.get<{message: String, posts: any}>('http://localhost:3000/api/posts')
+    this.http.get<{message: String, posts: any}>(BACKEND_URL)
     .pipe(map((postData) => {
       return postData.posts.map(post => {
         return {
@@ -44,7 +48,7 @@ export class PostsService {
     // return {...this.posts.find(p => p.id === id)};
     return this.http
               .get<{ _id: string, title: string, content: string, imagePath: string }>(
-                'http://localhost:3000/api/posts/' + id
+                BACKEND_URL + '/' + id
               );
   }
 
@@ -63,7 +67,7 @@ export class PostsService {
     // send a new http POST request to add a resource in the backend
     this.http
       .post<{message: string, post: Post }>(
-        'http://localhost:3000/api/posts', postData
+        BACKEND_URL, postData
       )
 
       .subscribe((responseData) => {
@@ -98,7 +102,7 @@ export class PostsService {
     }
 
     this.http
-      .put('http://localhost:3000/api/posts/' + id, postData)
+      .put(BACKEND_URL + '/' + id, postData)
 
       .subscribe((responseData) => {
         console.log(responseData);
@@ -121,7 +125,7 @@ export class PostsService {
 
   // this method sends new http DELETE request for a resource in the backend
   deletePost(postId: string) {
-    this.http.delete('http://localhost:3000/api/posts/' + postId)
+    this.http.delete(BACKEND_URL + '/' + postId)
       .subscribe(() => {
         console.log('The post is deleted');
         const updatedPosts = this.posts.filter(post => post.id !== postId);
