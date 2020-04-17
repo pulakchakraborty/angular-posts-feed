@@ -19,3 +19,7 @@ mat-spinner {
   width: 100%;
   box-shadow: lightseagreen;
 }
+
+.mat-paginator {
+  margin-top: 1rem;
+}

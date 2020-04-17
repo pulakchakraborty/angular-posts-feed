@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 import { Subscription } from 'rxjs';
@@ -22,6 +23,9 @@ export class PostListComponent implements OnInit, OnDestroy {
   // Spinner Flag
   isLoading = false;
   posts: Post[] = [];
+  totalPosts = 20;
+  postsPerPage = 2;
+  pageSizeOptions = [1, 2, 5];
   private postsSub: Subscription;
 
   /* Alternative 1 to use the PostsService by dependency injection
@@ -53,6 +57,11 @@ export class PostListComponent implements OnInit, OnDestroy {
     // Load the Spinner before deleting a post
     this.isLoading = true;
     this.postsService.deletePost(postId);
+  }
+
+  // Call this method whenever we change page. PageEvent is an object holding data about the current page.
+  onChangedPage(pageData: PageEvent) {
+    console.log(pageData);
   }
 
   ngOnDestroy() {
