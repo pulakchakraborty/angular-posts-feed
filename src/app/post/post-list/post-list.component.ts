@@ -63,6 +63,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   // Call this method whenever we change page. PageEvent is an object holding data about the current page.
   onChangedPage(pageData: PageEvent) {
     console.log(pageData);
+    this.isLoading = true;
     this.postsPerPage = pageData.pageSize;
     this.currentPage = pageData.pageIndex + 1;
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
