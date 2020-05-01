@@ -13,29 +13,32 @@ const BACKEND_URL = environment.apiURL + "/posts";
 @Injectable({providedIn: 'root'})  // alternative to declaring it in the providers section
 export class PostsService {
   private posts: Post[] = [];   // set the array empty
-  private postsUpdated = new Subject<Post[]>();
+  private postsUpdated = new Subject<{ posts: Post[], postCount: number }>();
 
   /* inject HttpClient */
   constructor (private http: HttpClient, private router: Router) {}
 
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
     // return [...this.posts];   // use spread operator tocopy elements of posts array
-
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     // send a new http get request to fetch resources i.e. posts from the backend
-    this.http.get<{message: String, posts: any}>(BACKEND_URL)
+    this.http.get<{ message: string, posts: any, maxPosts: number }>(BACKEND_URL + queryParams)
     .pipe(map((postData) => {
-      return postData.posts.map(post => {
-        return {
-          id: post._id,
-          title: post.title,
-          content: post.content,
-          imagePath: post.imagePath
-        };
-      });
+      return {
+        posts: postData.posts.map(post => {
+          return {
+            id: post._id,
+            title: post.title,
+            content: post.content,
+            imagePath: post.imagePath
+          };
+        }),
+        maxPosts: postData.maxPosts
+      };
     }))
-    .subscribe((transformedPosts) => {
-      this.posts = transformedPosts;
-      this.postsUpdated.next([...this.posts]);
+    .subscribe((transformedPostsData) => {
+      this.posts = transformedPostsData.posts;
+      this.postsUpdated.next({ posts: [...this.posts], postCount: transformedPostsData.maxPosts });
     });
   }
 
@@ -71,18 +74,6 @@ export class PostsService {
       )
 
       .subscribe((responseData) => {
-        const post: Post = {
-          id: responseData.post.id,
-          title: title,
-          content: content,
-          imagePath: responseData.post.imagePath
-        };
-        /* Comment out because of JSON -> FormData change
-        const id = responseData.postId;
-        post.id = id;
-        */
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
@@ -103,21 +94,7 @@ export class PostsService {
 
     this.http
       .put(BACKEND_URL + '/' + id, postData)
-
       .subscribe((responseData) => {
-        console.log(responseData);
-        // Update the post array locally
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        const post: Post = {
-          id: id,
-          title: title,
-          content: content,
-          imagePath: ""
-        };
-        updatedPosts[oldPostIndex] = post;
-        this.posts = updatedPosts;
-        this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
         console.log("local post array:" + this.posts);
       });
@@ -125,12 +102,6 @@ export class PostsService {
 
   // this method sends new http DELETE request for a resource in the backend
   deletePost(postId: string) {
-    this.http.delete(BACKEND_URL + '/' + postId)
-      .subscribe(() => {
-        console.log('The post is deleted');
-        const updatedPosts = this.posts.filter(post => post.id !== postId);
-        this.posts = updatedPosts;
-        this.postsUpdated.next([...this.posts]);
-      });
+    return this.http.delete(BACKEND_URL + '/' + postId);
   }
 }

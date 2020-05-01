@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 import { Subscription } from 'rxjs';
@@ -22,6 +23,10 @@ export class PostListComponent implements OnInit, OnDestroy {
   // Spinner Flag
   isLoading = false;
   posts: Post[] = [];
+  totalPosts = 0;
+  postsPerPage = 2;
+  currentPage = 1;
+  pageSizeOptions = [1, 2, 5];
   private postsSub: Subscription;
 
   /* Alternative 1 to use the PostsService by dependency injection
@@ -38,13 +43,14 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Load the Spinner before getting the posts
     this.isLoading = true;
-    this.postsService.getPosts();
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
 
     // next set up a listener to the subject postsUpdated  and store the subscription in a property postsSub
     this.postsSub = this.postsService.getPostsUpdateListener()
-      .subscribe((posts: Post[]) => {
+      .subscribe(( postData: { posts: Post[], postCount: number }) => {
         this.isLoading = false;   // Turn off the spinner once posts are loaded
-        this.posts = posts;
+        this.totalPosts = postData.postCount;
+        this.posts = postData.posts;
       })
   }
 
@@ -52,7 +58,18 @@ export class PostListComponent implements OnInit, OnDestroy {
   onDelete(postId: string) {
     // Load the Spinner before deleting a post
     this.isLoading = true;
-    this.postsService.deletePost(postId);
+    this.postsService.deletePost(postId).subscribe(() => {
+      this.postsService.getPosts(this.postsPerPage, this.currentPage);
+    });
+  }
+
+  // Call this method whenever we change page. PageEvent is an object holding data about the current page.
+  onChangedPage(pageData: PageEvent) {
+    console.log(pageData);
+    this.isLoading = true;
+    this.postsPerPage = pageData.pageSize;
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
   }
 
   ngOnDestroy() {

@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     if (isValid) {
       error = null;
     }
-    cb(error, "backend/images");
+    cb(error, "images");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLowerCase().split(' ').join('-');
@@ -74,14 +74,29 @@ router.put("/:id", multer({storage: storage}).single("image"), (req, res, next) 
 });
 
 router.get("", (req, res, next) => {
+  const { pagesize, page } = req.query;
+  const [ pageSize , currentPage ] = [ +pagesize, +page ];
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
   // Fetch the data from the MongoDB database using static find() method
-  Post.find().then(documents => {
-    console.log(documents);
-    res.status(200).json({
-      message: 'the posts from the server are fetched successfully!!',
-      posts: documents
-    });   // return to the client
-  });
+  postQuery
+    .then(documents => {
+      fetchedPosts = documents;
+      return Post.count();
+    })
+    .then(count => {
+      console.log(fetchedPosts);
+      res.status(200).json({
+        message: 'the posts from the server are fetched successfully!!',
+        posts: fetchedPosts,
+        maxPosts: count
+      });   // return to the client
+    });
 
 });
 
