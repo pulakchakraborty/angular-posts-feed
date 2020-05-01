@@ -25,6 +25,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   posts: Post[] = [];
   totalPosts = 20;
   postsPerPage = 2;
+  currentPage = 1;
   pageSizeOptions = [1, 2, 5];
   private postsSub: Subscription;
 
@@ -42,7 +43,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Load the Spinner before getting the posts
     this.isLoading = true;
-    this.postsService.getPosts();
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
 
     // next set up a listener to the subject postsUpdated  and store the subscription in a property postsSub
     this.postsSub = this.postsService.getPostsUpdateListener()
@@ -62,6 +63,9 @@ export class PostListComponent implements OnInit, OnDestroy {
   // Call this method whenever we change page. PageEvent is an object holding data about the current page.
   onChangedPage(pageData: PageEvent) {
     console.log(pageData);
+    this.postsPerPage = pageData.pageSize;
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
   }
 
   ngOnDestroy() {

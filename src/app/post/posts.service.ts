@@ -18,11 +18,11 @@ export class PostsService {
   /* inject HttpClient */
   constructor (private http: HttpClient, private router: Router) {}
 
-  getPosts() {
+  getPosts(postsPerPage: number, currentPage: number) {
     // return [...this.posts];   // use spread operator tocopy elements of posts array
-
+    const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     // send a new http get request to fetch resources i.e. posts from the backend
-    this.http.get<{message: String, posts: any}>(BACKEND_URL)
+    this.http.get<{message: String, posts: any}>(BACKEND_URL + queryParams)
     .pipe(map((postData) => {
       return postData.posts.map(post => {
         return {
