@@ -5,7 +5,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Display the posts in the application:
 
-![Display Posts] (https://github.com/pulakchakraborty/MeanAngularP1/tree/master/src/assets/img/homepage.png)
+![Display Posts](https://github.com/pulakchakraborty/MeanAngularP1/blob/master/src/assets/img/homepage.png)
 
 ## Development server
 
